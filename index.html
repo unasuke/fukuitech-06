@@ -1,0 +1,360 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>unasuke.conの話</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/white.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/solarized-dark.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+        <section>
+          <h1>unasuke.comの話</h1>
+          <p>
+            2016-07-09 fukutech #06
+          </p>
+          <p>
+            うなすけ
+          </p>
+        </section>
+        <section data-background-image='img/icon.jpg'>
+          <h2>誰</h2>
+          <ul>
+            <li>うなすけ</li>
+            <li>株式会社spice life所属</li>
+            <li>開発部 TMIX開発担当 ＆ インフラ部</li>
+          </ul>
+        </section>
+        <section data-background-image='img/spicelife.png'>
+          <h2>誰</h2>
+          <ul>
+            <li>うなすけ</li>
+            <li>株式会社spice life所属</li>
+            <li>開発部 TMIX開発担当 ＆ インフラ部</li>
+          </ul>
+        </section>
+        <section data-background-image='img/tmix.png'>
+          <h2>誰</h2>
+          <ul>
+            <li>うなすけ</li>
+            <li>株式会社spice life所属</li>
+            <li>開発部 TMIX開発担当 ＆ インフラ部</li>
+          </ul>
+        </section>
+        <section>
+          <h2>unasuke.comの話</h2>
+          <h3>主にDockerの話をします</h3>
+        </section>
+        <section>
+          <h2>unasuke.comの話</h2>
+          <h3>全体的な話</h3>
+          <p>2016-06-12 のDentoo.LT #14にて話しました</p>
+          <p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/l-9ytKXYijM" frameborder="0" allowfullscreen></iframe>
+          </p>
+          <p>
+            <small>2:32:50あたりから語彙がなくなる</small>
+          </p>
+        </section>
+        <section>
+          <h2>Q : なんでDockerの話をするのか</h2>
+          <h2 class='fragment'>A : Dockercon 2016行ってきたから</h2>
+        </section>
+        <section>
+          <h2>Q : Dockercon 2016とはなにか</h2>
+          <h2 class='fragment'>A : Dockerのカンファレンス<br>(今年はシアトル)</h2>
+        </section>
+        <section>
+          <h2>Q : Dockerとはなにか</h2>
+          <h2 class='fragment'>A : いまからはなすよ！！！</h2>
+        </section>
+        <section>
+          <h2>本題に入る前に</h2>
+          <p>今のうちにDockerをインストールしておいてください</p>
+          <p>
+            <a href='https://www.docker.com/products/docker'>https://www.docker.com/products/docker</a>
+            <br>
+            <a href='http://bit.ly/29nClmD'>( http://bit.ly/29nClmD )</a>
+          </p>
+        </section>
+        <section>
+          <h2>本題</h2>
+          <h3>Dockerとは</h3>
+          <p>
+            <img src='img/docker.png'>
+          </p>
+        </section>
+        <section>
+          <h2>Dockerとは</h2>
+          <p>コンテナ型仮想化技術を用いた仮想化ソフトウェア</p>
+        </section>
+        <section>
+          <h3>仮想化</h3>
+          <p class="fragment">
+            <img src='img/virtualbox_logo.png'>
+            <br>
+            みんなだいすきVirtualBox
+            <br>
+            <small>GNU GPL v2 https://commons.wikimedia.org/wiki/File:Virtualbox_logo.png</small>
+          </p>
+        </section>
+        <section>
+          <h3>VirtualBoxの仮想化</h3>
+          <ul>
+            <li>CPUのレイヤーで仮想化(ホスト型仮想化)</li>
+            <li>OSの起動時間とか必要</li>
+            <li>開発環境として使うのはよくある</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Dockerの仮想化</h3>
+          <ul>
+            <li>LXCを利用した仮想化(コンテナ型仮想化)</li>
+            <li>カーネルをホストと共有しているので速い</li>
+            <li>本番環境として使うことが多い</li>
+          </ul>
+        </section>
+        <section>
+          <h3>おおざっぱにまとめると</h3>
+          <p>
+            VirtualBoxはOSの中にまたOSがドンという感じ<br>
+            Dockerは実行するプログラムだけ隔離される感じ
+          </p>
+          <p>
+            VirtualBoxはWinやMacでも動くけど<br>
+            DockerはLinux上でしか動かせない<br>
+            <small>(語弊あり)</small>
+          </p>
+        </section>
+        <section>
+          <h2>Dockerなにがうれしいの</h2>
+        </section>
+        <section>
+          <h3>今までのインフラについて考える</h3>
+          <p>たとえばRuby on Railsを動かしたいとして</p>
+          <p>
+            <img src='img/rails-logo.svg' width='70%'>
+          </p>
+        </section>
+        <section>
+          <h4>Ruby on Railsが動くサーバーに必要なもの</h4>
+          <ul>
+            <li>Ruby</li>
+            <li>DB(mysql, postgresql...)</li>
+            <li>Server(apache, nginx...)</li>
+            <li>その他gemなどで必要なライブラリ</li>
+          </ul>
+        </section>
+        <section>
+          <h4>Ruby on Railsが動くサーバーに必要なもの</h4>
+          <ul>
+            <li>Ruby <span>←versionどうするの</span></li>
+            <li>DB <span>←versionどうするの</span></li>
+            <li>Server <span>←versionどうするの</span></li>
+            <li>ライブラリ <span>←versionどうするの</span></li>
+          </ul>
+          <br>
+          <div class='fragment'>
+            v e r s i o n ど う す る の
+          </div>
+        </section>
+        <section>
+          <h4>Ruby on Railsが動くサーバーを作る</h4>
+          <pre><code class='hljs' data-trim contenteditable>
+$ sudo apt install ruby mysql nginx
+$ wget railsのコード
+$ mysqlやnginxやらの設定
+$ portあけたりなんだり
+$ dbのmigrateとか
+          </code></pre>
+          <p>
+            <small>ubuntuだとして</small>
+          </p>
+        </section>
+        <section>
+          <h4>Ruby on Railsが動くサーバーが落ちたら</h4>
+          <p>
+            さっきの環境設定一からやりなおし？！？！
+          </p>
+        </section>
+        <section>
+          <h3>Infrastructure as Code</h3>
+          <p>
+            サーバーの状態をコードで管理する
+          </p>
+          <p>
+            chef, puppet, Ansible, itamae, Terraformなどなど
+          </p>
+          <p class="fragment">
+            かくして平和が訪れた……
+          </p>
+        </section>
+        <section>
+          <h3>Infrastructure as Code</h3>
+          <p>
+            サーバーの状態をコードで管理する
+          </p>
+          <p>
+            chef, puppet, Ansible, itamae, Terraformなどなど
+          </p>
+          <p>
+            <del>かくして平和が訪れた……</del>
+          </p>
+        </section>
+        <section>
+					<h4>急にサーバーを増やさなきゃいけない！</h4>
+					<p>
+						えっ、サーバー用意すんの10分ほどかかるんですけど……
+					</p>
+        </section>
+        <section>
+					<h4>障害発生！すぐ直して！</h4>
+					<p>
+						サーバーで作業しちゃったけど、インフラ定義コード変更しないとなぁ……
+					</p>
+        </section>
+        <section>
+          <h3>無敵ではないInfrastructure as Code</h3>
+          <ul>
+            <li>サーバーが「状態」を持ちがち</li>
+            <li>捨てられないサーバーが生まれがち</li>
+          </ul>
+        </section>
+        <section>
+          <h3>Dockerを導入すると</h3>
+          <ul>
+            <li>「捨てられる」インフラづくり</li>
+            <li>本番環境と開発環境が近づく</li>
+          </ul>
+        </section>
+        <section>
+          <h3>なぜそうなるのか</h3>
+          <ul>
+            <li>コンテナはすぐ捨てられる、すぐ立ち上がる</li>
+            <li>コンテナの中身は触らない</li>
+          </ul>
+          <p>
+            Immutable Infrastructure(不変のインフラ)ができあがる
+          </p>
+        </section>
+        <section>
+          <h2>Dockerやってみよう</h2>
+        </section>
+        <section>
+          <h2>Dockerやってみよう</h2>
+          <h3>hello world</h3>
+          <pre><code class='hljs' data-trim contenteditable>
+$ docker run hello-world
+          </code></pre>
+        </section>
+        <section>
+          <h3>hello world</h3>
+          <h4>何が起こったのか</h4>
+          <ol>
+            <li><a href='https://hub.docker.com/_/hello-world/'>https://hub.docker.com/_/hello-world/</a>からdocker imageをダウンロード</li>
+            <li>ダウンロードしてきたdocker imageを実行</li>
+          </ol>
+        </section>
+        <section>
+          <h3>docker image？</h3>
+          <p>
+            Dockerfileをbuildしてできあがるもの。さっきから言っている「コンテナ」と考えることができる。
+          </p>
+        </section>
+        <section>
+          <h3>Dockerfile？</h3>
+          <p>
+            docker imageの設計図。これに従ってdocker imageをつくる。<br>
+            Infrastructure as Codeの部分にあたる
+          </p>
+        </section>
+        <section>
+          <h3>Dockerfile ≠ docker image</h3>
+          <p>
+            Dockerfileからimageを作るときには<br>
+            ファイルのコピーなどが発生するため<br>
+            imageはどこでも作る事はできない
+          </p>
+          <p>
+            が、imageはどこでも実行することができる。
+          </p>
+          <p>
+            ソースコード ≠ コンパイルしたバイナリ
+          </p>
+        </section>
+        <section>
+          <h3>DockerでHTTPサーバーを動かしてみよう</h3>
+          <p><a href='https://github.com/unasuke/fukuitech-06-demo'>https://github.com/unasuke/fukuitech-06-demo</a></p>
+          <pre><code class='hljs shell' data-trim contenteditable>
+$ docker run -p 3000:3000 unasuke/fukuitech-06-demo
+          </code></pre>
+          <p>
+            ブラウザで<code>http://localhost:3000</code>にアクセス
+          </p>
+        </section>
+        <section>
+          <h3>docker buildしてみよう</h3>
+          <ol>
+            <li><code>index.html</code>を編集する</li>
+            <li><code>docker build</code>する</li>
+            <li><code>docker run</code>する</li>
+          </ol>
+          <p>
+            詳しくはREADMEを！！
+          </p>
+        </section>
+        <section>
+          <h2>unauske.comとdocker</h2>
+          <p>
+            HTTPサーバーであるH2Oを動作させるためにdockerを使っている
+          </p>
+          <pre><code class='hljs shell' data-trim contenteditable>
+$ docker run -p 80:80 -p 443:443 -v /path/to/doc/root unasuke-com-server
+          </code></pre>
+        </section>
+        <section>
+          <h2>まとめ</h2>
+          <ul>
+            <li>dockerはコンテナ型仮想化技術</li>
+            <li>Immutable Infrastructure</li>
+            <li>unasuke.comはdockerの上で動いている</li>
+          </ul>
+        </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
